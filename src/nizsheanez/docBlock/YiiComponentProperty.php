@@ -1,4 +1,6 @@
 <?php
+namespace nizsheanez\dockBlock;
+
 /**
  * Know all about CComponent, CModel, CActiveRecord and etc.
  */

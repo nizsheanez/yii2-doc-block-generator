@@ -1,5 +1,5 @@
 <?php
-namespace nizsheanez/dockBlock;
+namespace nizsheanez\dockBlock;
 
 use Yii;
 use ReflectionClass;
@@ -14,7 +14,7 @@ class DocBlockCommand extends ConsoleCommand
     public $config;
     public $interactive = false;
 
-    protected $baseClass = 'CComponent';
+    protected $baseClass = 'yii\base\Component';
     protected $filesIterator;
     protected $propertyIteratorOptions;
     protected $propertyOptions;

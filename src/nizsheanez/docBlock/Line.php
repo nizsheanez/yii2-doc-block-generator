@@ -1,5 +1,5 @@
 <?php
-namespace nizsheanez/dockBlock;
+namespace nizsheanez\dockBlock;
 
 use Yii;
 use ReflectionClass;
