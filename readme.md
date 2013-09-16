@@ -1,110 +1,77 @@
-Only for YII2 with the new Asset Manager, convert Less and Sass files to CSS whithout external tools and executable.
-The sass and less files are converted with PHP librairies
-It replace the AssetConverter who use external tools.
-The Less and Sass file are converted with time source files dependency.
+Генератор DocBlock для Yii. Добавляет поддержку автодополнения для
+публичных геттеров, сеттеров, событий, скоупов, релейшенов, поведений, атрибутов моделей AR
 
-###Requirements
+#Пример результата
 
-YII 2.0
-
-###Usage
-
-1) Install with Composer
-
-~~~php
-
-"require": {
-    "nizsheanez/yii2-asset-converter": "1.*",
-},
-
-php composer.phar update
+~~~
+/**
+ *
+ * !Attributes - атрибуты БД
+ * @property string           $language
+ * @property string           $status
+ * @property integer          $comments_denied
+ * @property string           $id
+ * @property string           $user_id
+ * @property string           $title
+ * @property string           $url
+ * @property string           $text
+ * @property string           $date_create
+ * @property integer          $order
+ *
+ * !Accessors - Геттеры и сеттеры класа и его поведений
+ * @property                  $href
+ * @property                  $content
+ * @property                  $errorsFlatArray
+ * @property                  $updateUrl
+ * @property                  $createUrl
+ * @property                  $deleteUrl
+ *
+ * !Relations - связи
+ * @property Language         $language_model
+ * @property TagRel[]         $tags_rels
+ * @property Tag[]            $tags
+ * @property int|null         $comments_count
+ * @property User             $user
+ * @property PageSectionRel[] $sections_rels
+ * @property PageSection[]    $sections
+ *
+ * !Scopes - именованные группы условий, возвращают этот АР
+ * @method   Page             published()
+ * @method   Page             sitemap()
+ * @method   Page             ordered()
+ * @method   Page             last()
+ *
+ */
 
 ~~~
 
-2) Modify assetManager in your configuration file {app}/protected/config/main.php
+#Использование
 
-~~~php
-    'assetManager' => array(
-        'bundles' => require(__DIR__ . '/assets.php'),
-        'converter'=>array(
-            'class'=>'nizsheanez\assetConverter\Converter',
-        )
-    ),
-~~~
+1) Конфигурируется, как и любая консольная комманда Yii, однако сначала применяется базовая конфигурация:
+`docBlock/configs/stdConfig.php`, затем файл заданный через свойство `$config` из той же директори
+(для возможности задавать различные конфигурации из консоли), затем конфигурация из `commandMap`
+2) Комманда работает с 2-мя итераторами: по файлам и по свойствам/методам класса - т.е. вы можете однозначно задать
+для каких файлов и каких свойств/методов генерировать dockBlock'и.
+По умолчанию в качестве итератора по файлам используется `ModelInModuleFilesIterator`,
+он рекурсивно проходит по всем директориям вида `/moduleId/models/*`
+А в качестве итератора по свойствам используется `YiiComponentPropertyIterator` - который обходит:
+`attributes`, `events`, `accessors`, `relations`, `scopes`
 
-3) Create .gitignore in
-4) Enjoy!
+#Список реализованных фич:
 
-- Files with extension .sass are converted to a .css file
-- Files with extension .less are converted to a .css file
-- Files with extension .scss are converted to a .css file
-
-###Example of assets config file /protected/config/assets.php
-
-~~~php
-
-return array(
-	'app' => array(
-		'basePath' => '@webroot',
-		'baseUrl' => '@web',
-        'css' => array(
-			'css/bootstrap.min.css',
-			'css/bootstrap-responsive.min.css',
-			'css/site.css',
-            'css/less_style.less',
-            'css/sass_style.sass',
-		),
-		'js' => array(
-
-		),
-		'depends' => array(
-			'yii',
-		),
-	),
-);
-
-~~~
-
-###Where is compiled files?
-
-By default it present at @webroot/compiled
-But you can change it by destinationDir property from config
-
-
-### Full configuration
-
-~~~php
-
-'components' => array(
-		'assetManager' => array(
-            'bundles' => require(__DIR__ . '/assets.php'),
-            'converter'=>array(
-                'class'=>'nizsheanez\assetParser\Converter',
-                'force'=>false, // true : If you want convert your sass each time without time dependency
-                'destinationDir' => 'compiled', //at which folder of @webroot put compiled files
-                'parsers' => array(
-                    'sass' => array( // file extension to parse
-                        'class' => 'nizsheanez\assetParser\Sass',
-                        'output' => 'css', // parsed output file type
-                        'options' => array(
-                            'cachePath' => '@app/runtime/cache/sass-parser' // optional options
-                        ),
-                    ),
-                    'scss' => array( // file extension to parse
-                        'class' => 'nizsheanez\assetParser\Sass',
-                        'output' => 'css', // parsed output file type
-                        'options' => array() // optional options
-                    ),
-                    'less' => array( // file extension to parse
-                        'class' => 'nizsheanez\assetParser\Less',
-                        'output' => 'css', // parsed output file type
-                        'options' => array(
-                            'auto' => true, // optional options
-                        )
-                    )
-                )
-            )
-        ),
-	),
-
-~~~
+- Если геттер(сеттер) имеет больше нуля(одного) обязательных параметров, то он игнорируется.
+- Если свойство уже описано в одном из родительских классов, то он игнорируется.
+- Сгенерированные комментарии можно редактировать! т.е. если вы захотите добавить описание в блок
+комментариев(так называемые shortDescription и longDescription), то при перегенерации они будут
+сохранены(вы же старались!).
+- Если для задания описания или типа свойства не хватило информации в текущих исходниках,
+то вы можете добавить их прямо в сгенерированный блок комментариев и они будут использоваться в дальнейшем
+и не потеряются при перегенерации. Конечно же, если информации в исходниках достаточно для генерации
+типа или комментария, то будет использована она, так что редактировать сгенерированные типы или
+комментарии бесполезно - нужно редактировать источник информации, например комментарии к геттеру.
+- Аннотации
+`author|api|category|deprecated|example|filesource|ignore|internal|license`,
+`link|package|see|since|subpackage|todo|version|uses|used-by`
+будут сохранены(думаю этой простыни вам хватит)
+- Преобразование стилей кодирования camelCaseToUnderscore (по умолчанию выключено, т.к. требует внешнего преобразователя)
+- Ну и приятный бонус: вертикальное выравнивание (можно выключить)
