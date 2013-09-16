@@ -1,0 +1,19 @@
+{
+    "name": "nizsheanez/yii2-doc-block-generator",
+    "description": "DocBlock generator for Yii2 classes",
+    "type": "library",
+    "keywords": ["yii", "yii2", "doc", "phpdoc", "docblock"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Alex Sharov",
+            "email": "www.pismeco@gmail.com",
+            "role": "Author"
+        }
+    ],
+    "require" : {
+    },
+    "autoload": {
+        "psr-0": { "nizsheanez": "src" }
+    }
+}
