@@ -1,7 +1,7 @@
 {
     "name": "nizsheanez/yii2-doc-block-generator",
     "description": "DocBlock generator for Yii2 classes",
-    "type": "library",
+    "type": "yii2-extension",
     "keywords": ["yii", "yii2", "doc", "phpdoc", "docblock"],
     "license": "BSD-3-Clause",
     "minimum-stability": "dev",
@@ -15,6 +15,7 @@
     "require" : {
     },
     "autoload": {
-        "psr-0": { "nizsheanez": "src" }
-    }
+        "psr-0": { "nizsheanez\\dockBlock\\": "" }
+    },
+    "target-dir": "nizsheanez/dockBlock"
 }
